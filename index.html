@@ -11,7 +11,6 @@
       --bg2: rgba(34,34,34,0.9);
       --card: rgba(30,30,30,0.4);
       --gold: #D4AF37;
-      --silver: #C0C0C0;
       --text: #EEE;
     }
     *, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
@@ -23,13 +22,14 @@
       text-align:center;
       min-height:100vh;
     }
-    @keyframes pop { from{opacity:0;transform:scale(0.95);} to{opacity:1;transform:scale(1);} }
     h1 { font-family:'Cinzel', serif; font-size:2.8rem; color:var(--gold);
          margin-bottom:20px; text-shadow:2px 2px 6px rgba(0,0,0,0.7); }
-    #langToggle { position:absolute; top:20px; right:20px;
-         background:var(--gold); color:#121212; border:none;
-         padding:8px 12px; border-radius:4px; font-weight:bold;
-         cursor:pointer; transition:transform .2s; }
+    #langToggle {
+      position:absolute; top:20px; right:20px;
+      background:var(--gold); color:#121212; border:none;
+      padding:8px 12px; border-radius:4px; font-weight:bold;
+      cursor:pointer; transition:transform .2s;
+    }
     #langToggle:hover { transform:translateY(-2px); }
     .tabs { display:flex; justify-content:center; gap:10px; margin-bottom:10px; }
     .tab-btn { padding:8px 16px; background:var(--card); border:none;
@@ -41,7 +41,7 @@
     .card { background:var(--card); backdrop-filter:blur(6px);
          margin:0 auto 20px; padding:15px; width:300px;
          border-radius:8px; box-shadow:2px 2px 12px rgba(0,0,0,0.6);
-         animation:pop .4s ease-out; }
+    }
     .card strong { display:block; margin-bottom:8px; }
     .btn { display:inline-block; background:#7289DA; color:#fff;
          text-decoration:none; padding:8px 16px; border-radius:4px;
@@ -50,24 +50,21 @@
     .search-box { margin:10px auto; max-width:400px; display:block;
          padding:8px; width:100%; border-radius:4px; border:1px solid #555;
          background: var(--card); color: var(--text); }
-    .chart-container, .member-section { max-width:800px; margin:20px auto;
-         display:none; animation:pop .4s ease-out; text-align:left; }
-    .chart-container.active, .member-section.active { display:block; }
-    .diff-text { color:var(--gold); margin-top:10px; font-size:1.1rem; }
-    .member-section h2 { font-family:'Cinzel', serif; color:var(--silver);
+    .member-section { max-width:800px; margin:20px auto;
+         text-align:left; }
+    .member-section h2 { font-family:'Cinzel', serif; color:var(--gold);
          margin-bottom:10px; }
     table { width:100%; border-collapse:collapse;
-         backdrop-filter:blur(6px); background:var(--card);
-         margin-top:10px; }
+         background:var(--card); margin-top:10px; }
     th, td { border:1px solid #444; padding:8px; }
     th { background:#2A2A2A; }
     tr:nth-child(even) { background:rgba(30,30,30,0.3); }
     .pagination { text-align:center; margin:10px 0; }
     .page-btn { margin:0 4px; padding:4px 8px; border:none;
          background:var(--card); color:var(--text); cursor:pointer;
-         border-radius:4px; transition:background .2s; }
+         border-radius:4px; }
     .page-btn.active { background:var(--gold); color:#121212; }
-    .page-btn:hover { background:var(--silver); color:#121212; }
+    .page-btn:hover { background:var(--gold); color:#121212; }
     .page-size { margin-left:10px; padding:4px; }
   </style>
 </head>
@@ -84,124 +81,27 @@
   </div>
   <a id="discordBtn" class="btn" href="https://discord.gg/bt9grH4U3w" target="_blank">Discord 초대</a>
   <input type="text" id="searchInput" class="search-box" placeholder="멤버 이름으로 검색...">
-
-  <!-- 페이지 사이즈 선택 -->
   <div class="pagination">
     표시 수: <select id="pageSizeSelect" class="page-size"><option>10</option><option>20</option><option>50</option></select>
   </div>
-
-  <!-- KVK1차,2차 차트 및 테이블 영역 -->
-  <div class="chart-container active" id="chart-시트 1">
-    <canvas id="kvkChart1" width="700" height="350"></canvas>
-    <div class="diff-text" id="diff-시트 1"></div>
-  </div>
   <div class="member-section active" id="section-시트 1"></div>
   <div class="pagination" id="pages-시트 1"></div>
-
-  <div class="chart-container" id="chart-시트 2">
-    <canvas id="kvkChart2" width="700" height="350"></canvas>
-    <div class="diff-text" id="diff-시트 2"></div>
-  </div>
   <div class="member-section" id="section-시트 2"></div>
   <div class="pagination" id="pages-시트 2"></div>
-
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script>
-    const texts = {
-      ko:{ title:'3599 왕국 전쟁 통계', totalKP:'총 KP (모든 참여자)', discord:'Discord 초대', diffLabel:'DKP 차이: ', headers:['차수','ID','멤버','총 DKP']},
-      en:{ title:'3599 Kingdom War Stats', totalKP:'Total KP (All Participants)', discord:'Invite Discord', diffLabel:'DKP Difference: ', headers:['Round','ID','Member','Total DKP']}
-    };
+    const texts = { ko:{ title:'3599 왕국 전쟁 통계', totalKP:'총 KP (모든 참여자)', discord:'Discord 초대', headers:['차수','ID','멤버','총 DKP']}, en:{ title:'3599 Kingdom War Stats', totalKP:'Total KP (All Participants)', discord:'Invite Discord', headers:['Round','ID','Member','Total DKP']} };
     let lang='ko';
     const sheetId='1G2RwOq32kSubrYRtO5xt6UsaIXQBdfjKsz9r386PFso';
     const sheets=['시트 1','시트 2'];
-    const dataBySheet={}, filteredBySheet={}, pageSizeBySheet={}, currentPageBySheet={};
-
-    document.getElementById('langToggle').onclick=()=>{lang=lang==='ko'?'en':'ko'; applyLang();};
-    document.getElementById('pageSizeSelect').onchange=e=>{ sheets.forEach(sheet=>{ pageSizeBySheet[sheet]=+e.target.value; currentPageBySheet[sheet]=1; renderTable(sheet); }); };
-    document.getElementById('searchInput').oninput=e=>{ sheets.forEach(renderTable); };
-
-    async function fetchAll(sheet){
-      const url=`https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:json&sheet=${encodeURIComponent(sheet)}`;
-      const txt=await fetch(url).then(r=>r.text());
-      const json=JSON.parse(txt.substr(47).slice(0,-2));
-      return json.table.rows.map(r=>r.c.map(c=>c?.v||'')).map(r=>({round:sheet,id:r[1],name:r[2],dkp:Number(r[3]||0)}));
-    }
-
-    (async()=>{
-      let totalKP=0;
-      for(const sheet of sheets){
-        const data=await fetchAll(sheet);
-        dataBySheet[sheet]=data.sort((a,b)=>b.dkp-a.dkp);
-        totalKP+=data.reduce((s,m)=>s+m.dkp,0);
-        pageSizeBySheet[sheet]=10;
-        currentPageBySheet[sheet]=1;
-      }
-      document.getElementById('totalKP').textContent=totalKP.toLocaleString();
-      sheets.forEach(sheet=>{
-        renderChart(sheet);
-        renderTable(sheet);
-      });
-      setupTabs(); applyLang();
-    })();
-
-    function renderChart(sheet){
-      const idx=sheets.indexOf(sheet)+1;
-      const ctx=document.getElementById(`kvkChart${idx}`).getContext('2d');
-      new Chart(ctx,{type:'bar',data:{labels:sheets.map(s=>s.replace('시트','KVK')),
-        datasets:[{label:'DKP',data:sheets.map(s=>dataBySheet[s].reduce((a,m)=>a+m.dkp,0)),backgroundColor:['#D4AF37','#C0C0C0']}]},
-        options:{responsive:true,scales:{y:{beginAtZero:true}}}});
-      document.getElementById(`diff-${sheet}`).textContent=texts[lang].diffLabel+dataBySheet[sheet].reduce((a,m)=>a+m.dkp,0).toLocaleString()+' KP';
-    }
-
-    function renderTable(sheet){
-      const all=dataBySheet[sheet];
-      const q=document.getElementById('searchInput').value.toLowerCase();
-      const filtered=all.filter(m=>m.name.toLowerCase().includes(q));
-      filteredBySheet[sheet]=filtered;
-      const pageSize=pageSizeBySheet[sheet];
-      const totalPages=Math.ceil(filtered.length/pageSize)||1;
-      let page=currentPageBySheet[sheet];
-      if(page>totalPages) page=1;
-      currentPageBySheet[sheet]=page;
-      const start=(page-1)*pageSize;
-      const pageData=filtered.slice(start,start+pageSize);
-      const sec=document.getElementById(`section-${sheet}`);
-      let html=`<h2>${sheet.replace('시트','KVK')}</h2><table><thead><tr>${texts[lang].headers.map(h=>`<th>${h}</th>`).join('')}</tr></thead><tbody>`;
-      pageData.forEach(m=>{html+=`<tr><td>${m.round.replace('시트','KVK')}</td><td>${m.id}</td><td>${m.name}</td><td>${m.dkp.toLocaleString()}</td></tr>`;});
-      html+='</tbody></table>';
-      sec.innerHTML=html;
-      // 페이지 버튼
-      const pagDiv=document.getElementById(`pages-${sheet}`);
-      let pagHtml='';
-      for(let i=1;i<=totalPages;i++){
-        pagHtml+=`<button class="page-btn${i===page?' active':''}" data-sheet="${sheet}" data-page="${i}">${i}</button>`;
-      }
-      pagDiv.innerHTML=pagHtml;
-      pagDiv.querySelectorAll('.page-btn').forEach(btn=>btn.onclick=()=>{
-        currentPageBySheet[btn.dataset.sheet]=+btn.dataset.page;
-        renderTable(btn.dataset.sheet);
-      });
-    }
-
-    function setupTabs(){
-      document.querySelectorAll('.tab-btn').forEach(btn=>btn.onclick=()=>{
-        document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
-        btn.classList.add('active');
-        const key=btn.dataset.key;
-        document.querySelectorAll('.chart-container, .member-section, .pagination').forEach(el=>el.classList.remove('active'));
-        document.getElementById(`chart-${key}`).classList.add('active');
-        document.getElementById(`section-${key}`).classList.add('active');
-        document.getElementById(`pages-${key}`).classList.add('active');
-      });
-    }
-
-    function applyLang(){
-      const t=texts[lang];
-      document.getElementById('title').textContent=t.title;
-      document.getElementById('totalKPLabel').textContent=t.totalKP;
-      document.getElementById('discordBtn').textContent=t.discord;
-      document.getElementById('searchInput').placeholder=lang==='ko'?'멤버 이름으로 검색...':'Search by name...';
-    }
+    const dataBySheet={}, pageSizeBySheet={}, currentPageBySheet={};
+    document.getElementById('langToggle').onclick=()=>{lang=lang==='ko'?'en':'ko';updateLang();};
+    document.getElementById('pageSizeSelect').onchange=e=>{sheets.forEach(sheet=>{pageSizeBySheet[sheet]=+e.target.value;currentPageBySheet[sheet]=1;renderTable(sheet);});};
+    document.getElementById('searchInput').oninput=()=>{sheets.forEach(renderTable);};
+    async function fetchAll(sheet){const url=`https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:json&sheet=${encodeURIComponent(sheet)}`;const txt=await fetch(url).then(r=>r.text());const json=JSON.parse(txt.substr(47).slice(0,-2));return json.table.rows.map(r=>r.c.map(c=>c?.v||'')).map(r=>({round:sheet,id:r[1],name:r[2],dkp:Number(r[3]||0)}));}
+    (async()=>{let totalKP=0;for(const sheet of sheets){const data=(await fetchAll(sheet)).sort((a,b)=>b.dkp-a.dkp);dataBySheet[sheet]=data;totalKP+=data.reduce((s,m)=>s+m.dkp,0);pageSizeBySheet[sheet]=10;currentPageBySheet[sheet]=1;}document.getElementById('totalKP').textContent=totalKP.toLocaleString();sheets.forEach(renderTable);updateLang();setupTabs();})();
+    function renderTable(sheet){const data=dataBySheet[sheet];const q=document.getElementById('searchInput').value.toLowerCase();const filtered=data.filter(m=>m.name.toLowerCase().includes(q));const pageSize=pageSizeBySheet[sheet],totalPages=Math.ceil(filtered.length/pageSize)||1;let page=currentPageBySheet[sheet];if(page>totalPages)page=1;currentPageBySheet[sheet]=page;const pageData=filtered.slice((page-1)*pageSize,(page-1)*pageSize+pageSize);const sec=document.getElementById(`section-${sheet}`);let html=`<h2>${sheet.replace('시트','KVK')}</h2><table><thead><tr>${texts[lang].headers.map(h=>`<th>${h}</th>`).join('')}</tr></thead><tbody>`;pageData.forEach(m=>{html+=`<tr><td>${m.round.replace('시트','KVK')}</td><td>${m.id}</td><td>${m.name}</td><td>${m.dkp.toLocaleString()}</td></tr>`;});html+='</tbody></table>';sec.innerHTML=html;const pagDiv=document.getElementById(`pages-${sheet}`);let pagHtml='';for(let i=1;i<=totalPages;i++){pagHtml+=`<button class="page-btn${i===page?' active':''}" data-sheet="${sheet}" data-page="${i}">${i}</button>`;}pagDiv.innerHTML=pagHtml;pagDiv.querySelectorAll('.page-btn').forEach(btn=>btn.onclick=()=>{currentPageBySheet[btn.dataset.sheet]=+btn.dataset.page;renderTable(btn.dataset.sheet);}));}
+    function setupTabs(){document.querySelectorAll('.tab-btn').forEach(btn=>btn.onclick=()=>{document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');const key=btn.dataset.key;document.querySelectorAll('.member-section, .pagination').forEach(el=>el.classList.remove('active'));document.getElementById(`section-${key}`).classList.add('active');document.getElementById(`pages-${key}`).classList.add('active');}));}
+    function updateLang(){const t=texts[lang];document.getElementById('title').textContent=t.title;document.getElementById('totalKPLabel').textContent=t.totalKP;document.getElementById('discordBtn').textContent=t.discord;document.getElementById('searchInput').placeholder=lang==='ko'?'멤버 이름으로 검색...':'Search by name...';}
   </script>
 </body>
 </html>
