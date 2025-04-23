@@ -2,9 +2,9 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>3599 왕국 전쟁 통계</title>
-  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Lora:wght@400;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Lora:wght@400;700&display=swap" rel="stylesheet"/>
   <style>
     :root {
       --bg1: rgba(18,18,18,0.9);
@@ -36,12 +36,13 @@
       cursor:pointer; transition:transform .2s;
     }
     #langToggle:hover { transform:translateY(-2px); }
-    .tabs { display:flex; justify-content:center; gap:10px; margin-bottom:10px; }
+    .tabs {
+      display:flex; justify-content:center; gap:10px; margin-bottom:10px;
+    }
     .tab-btn {
       padding:8px 16px;
       background:var(--card);
-      border:none;
-      border-radius:4px;
+      border:none; border-radius:4px;
       color:var(--text);
       backdrop-filter:blur(6px);
       transition:transform .2s, background .2s;
@@ -56,94 +57,86 @@
     .card {
       background:var(--card);
       backdrop-filter:blur(6px);
-      margin:0 auto 20px;
-      padding:15px;
-      width:300px;
-      border-radius:8px;
+      margin:0 auto 20px; padding:15px;
+      width:300px; border-radius:8px;
       box-shadow:2px 2px 12px rgba(0,0,0,0.6);
     }
     .card strong { display:block; margin-bottom:8px; }
     .btn {
       display:inline-block;
-      background:#7289DA;
-      color:#fff;
-      text-decoration:none;
-      padding:8px 16px;
-      border-radius:4px;
-      margin-bottom:20px;
-      transition:transform .2s;
-      cursor:pointer;
+      background:#7289DA; color:#fff;
+      text-decoration:none; padding:8px 16px;
+      border-radius:4px; margin-bottom:20px;
+      transition:transform .2s; cursor:pointer;
     }
     .btn:hover { transform:translateY(-2px); }
     .search-box {
-      margin:10px auto;
-      max-width:400px;
-      display:block;
-      padding:8px;
-      width:100%;
-      border-radius:4px;
-      border:1px solid #555;
-      background: var(--card);
+      margin:10px auto; max-width:400px; display:block;
+      padding:8px; width:100%; border-radius:4px;
+      border:1px solid #555; background: var(--card);
       color: var(--text);
     }
+    /* 탭별 섹션 · 페이징 숨기기/보이기 */
+    .member-section,
     .pagination {
-      text-align:center;
-      margin:10px 0;
+      display: none;
     }
-    .page-size {
-      margin-left:10px;
-      padding:4px;
-    }
-    .page-btn {
-      margin:0 4px;
-      padding:4px 8px;
-      border:none;
-      background:var(--card);
-      color:var(--text);
-      cursor:pointer;
-      border-radius:4px;
-    }
-    .page-btn.active {
-      background:var(--gold);
-      color:#121212;
+    .member-section.active,
+    .pagination.active {
+      display: block;
     }
     .member-section {
-      max-width:800px;
-      margin:20px auto;
-      text-align:left;
+      max-width:800px; margin:20px auto; text-align:left;
     }
     .member-section h2 {
-      font-family:'Cinzel', serif;
-      color:var(--gold);
+      font-family:'Cinzel', serif; color:var(--gold);
       margin-bottom:10px;
     }
     table {
-      width:100%;
-      border-collapse:collapse;
-      background:var(--card);
-      margin-top:10px;
+      width:100%; border-collapse:collapse;
+      background:var(--card); margin-top:10px;
     }
     th, td {
-      border:1px solid #444;
-      padding:8px;
+      border:1px solid #444; padding:8px;
     }
     th { background:#2A2A2A; }
     tr:nth-child(even) { background:rgba(30,30,30,0.3); }
+    .pagination {
+      text-align:center; margin:10px 0;
+    }
+    .page-size {
+      margin-left:10px; padding:4px;
+    }
+    .page-btn {
+      margin:0 4px; padding:4px 8px; border:none;
+      background:var(--card); color:var(--text);
+      cursor:pointer; border-radius:4px;
+    }
+    .page-btn.active {
+      background:var(--gold); color:#121212;
+    }
+    .page-btn:hover {
+      background:var(--gold); color:#121212;
+    }
   </style>
 </head>
 <body>
   <button id="langToggle">EN</button>
   <h1 id="title">3599 왕국 전쟁 통계</h1>
+
   <div class="tabs">
     <button class="tab-btn active" data-key="시트 1">KVK 1</button>
-    <button class="tab-btn" data-key="시트 2">KVK 2</button>
+    <button class="tab-btn"        data-key="시트 2">KVK 2</button>
   </div>
+
   <div class="card">
     <strong id="totalKPLabel">총 KP (모든 참여자)</strong>
     <p id="totalKP">로딩 중...</p>
   </div>
+
   <a id="discordBtn" class="btn" href="https://discord.gg/bt9grH4U3w" target="_blank">Discord 초대</a>
-  <input type="text" id="searchInput" class="search-box" placeholder="멤버 이름으로 검색..." />
+
+  <input type="text" id="searchInput" class="search-box" placeholder="멤버 이름으로 검색…" />
   <div class="pagination">
     표시 수:
     <select id="pageSizeSelect" class="page-size">
@@ -152,33 +145,45 @@
       <option>50</option>
     </select>
   </div>
+
+  <!-- 시트 1 -->
   <div class="member-section active" id="section-시트 1"></div>
-  <div class="pagination" id="pages-시트 1"></div>
+  <div class="pagination active" id="pages-시트 1"></div>
+  <!-- 시트 2 -->
   <div class="member-section" id="section-시트 2"></div>
-  <div class="pagination" id="pages-시트 2"></div>
+  <div class="pagination"     id="pages-시트 2"></div>
+
   <script>
     const texts = {
       ko: {
-        title: '3599 왕국 전쟁 통계',
+        title:   '3599 왕국 전쟁 통계',
         totalKP: '총 KP (모든 참여자)',
         discord: 'Discord 초대',
         headers: ['차수','ID','멤버','총 DKP']
       },
       en: {
-        title: '3599 Kingdom War Stats',
+        title:   '3599 Kingdom War Stats',
         totalKP: 'Total KP (All Participants)',
         discord: 'Invite Discord',
         headers: ['Round','ID','Member','Total DKP']
       }
     };
     let lang = 'ko';
-    const sheetId = '1G2RwOq32kSubrYRtO5xt6UsaIXQBdfjKsz9r386PFso';
-    const sheets = ['시트 1','시트 2'];
-    const dataBySheet = {};
-    const pageSizeBySheet = {};
-    const currentPageBySheet = {};
 
-    document.getElementById('langToggle').onclick = () => { lang = lang==='ko'?'en':'ko'; applyLang(); };
+    const sheetId = '1G2RwOq32kSubrYRtO5xt6UsaIXQBdfjKsz9r386PFso',
+          sheets  = ['시트 1','시트 2'];
+
+    const dataBySheet        = {},
+          pageSizeBySheet    = {},
+          currentPageBySheet = {};
+
+    // 언어 토글
+    document.getElementById('langToggle').onclick = () => {
+      lang = lang === 'ko' ? 'en' : 'ko';
+      applyLang();
+    };
+
+    // 표시 수 변경
     document.getElementById('pageSizeSelect').onchange = e => {
       sheets.forEach(sheet => {
         pageSizeBySheet[sheet] = +e.target.value;
@@ -186,64 +191,92 @@
         renderTable(sheet);
       });
     };
-    document.getElementById('searchInput').oninput = () => { sheets.forEach(renderTable); };
 
+    // 검색 필터
+    document.getElementById('searchInput').oninput = () => {
+      sheets.forEach(renderTable);
+    };
+
+    // 구글 시트 데이터 로드
     async function fetchAll(sheet) {
       const url = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:json&sheet=${encodeURIComponent(sheet)}`;
-      const txt = await fetch(url).then(r => r.text());
+      const txt = await fetch(url).then(r=>r.text());
       const json = JSON.parse(txt.substr(47).slice(0,-2));
-      return json.table.rows.map(r => r.c.map(c => c?.v||'')).map(r => ({
-        round: sheet,
-        id:    r[1],
-        name:  r[2],
-        dkp:   Number(r[3]||0)
-      }));
+      return json.table.rows
+        .map(r => r.c.map(c => c?.v||''))
+        .map(r => ({
+          round: sheet,
+          id:    r[1],
+          name:  r[2],
+          dkp:   Number(r[3]||0)
+        }));
     }
 
     (async () => {
       let totalKP = 0;
-      for(const sheet of sheets) {
+
+      for (const sheet of sheets) {
+        // 내림차순 정렬 후 상위 200개만
         let data = await fetchAll(sheet);
-        // 내림차순 정렬 후 상위 200개로 제한
-        data = data.sort((a,b) => b.dkp - a.dkp).slice(0,200);
-        dataBySheet[sheet] = data;
-        totalKP += data.reduce((s,m) => s + m.dkp, 0);
-        pageSizeBySheet[sheet] = 10;
+        data = data.sort((a,b)=>b.dkp - a.dkp).slice(0,200);
+
+        dataBySheet[sheet]        = data;
+        totalKP                 += data.reduce((s,m)=>s+m.dkp, 0);
+        pageSizeBySheet[sheet]    = 10;
         currentPageBySheet[sheet] = 1;
       }
+
       document.getElementById('totalKP').textContent = totalKP.toLocaleString();
-      sheets.forEach(sheet => renderTable(sheet));
+
+      sheets.forEach(sheet=>{
+        renderTable(sheet);
+      });
+
       setupTabs();
       applyLang();
     })();
 
+    // 테이블 렌더링
     function renderTable(sheet) {
-      const data = dataBySheet[sheet];
-      const query = document.getElementById('searchInput').value.toLowerCase();
-      const filtered = data.filter(m => m.name.toLowerCase().includes(query));
-      const pageSize = pageSizeBySheet[sheet];
-      const totalPages = Math.ceil(filtered.length / pageSize) || 1;
-      let page = currentPageBySheet[sheet];
-      if(page > totalPages) page = 1;
+      const all    = dataBySheet[sheet];
+      const query  = document.getElementById('searchInput').value.toLowerCase();
+      const filtered = all.filter(m=>m.name.toLowerCase().includes(query));
+
+      const pageSize   = pageSizeBySheet[sheet],
+            totalPages = Math.ceil(filtered.length / pageSize) || 1;
+      let   page       = currentPageBySheet[sheet];
+      if (page > totalPages) page = 1;
       currentPageBySheet[sheet] = page;
-      const start = (page-1)*pageSize;
-      const pageData = filtered.slice(start, start + pageSize);
+
+      const start    = (page-1)*pageSize,
+            pageData = filtered.slice(start, start+pageSize);
 
       const sec = document.getElementById(`section-${sheet}`);
-      let html = `<h2>${sheet.replace('시트','KVK')}</h2><table><thead><tr>${texts[lang].headers.map(h=>`<th>${h}</th>`).join('')}</tr></thead><tbody>`;
-      pageData.forEach(m => {
-        html += `<tr><td>${m.round.replace('시트','KVK')}</td><td>${m.id}</td><td>${m.name}</td><td>${m.dkp.toLocaleString()}</td></tr>`;
+      let html = `<h2>${sheet.replace('시트','KVK')}</h2>
+                  <table>
+                    <thead>
+                      <tr>${texts[lang].headers.map(h=>`<th>${h}</th>`).join('')}</tr>
+                    </thead><tbody>`;
+      pageData.forEach(m=>{
+        html += `<tr>
+                   <td>${m.round.replace('시트','KVK')}</td>
+                   <td>${m.id}</td>
+                   <td>${m.name}</td>
+                   <td>${m.dkp.toLocaleString()}</td>
+                 </tr>`;
       });
       html += '</tbody></table>';
       sec.innerHTML = html;
 
       const pagDiv = document.getElementById(`pages-${sheet}`);
       let pagHtml = '';
-      for(let i=1; i<=totalPages; i++) {
-        pagHtml += `<button class="page-btn${i===page?' active':''}" data-sheet="${sheet}" data-page="${i}">${i}</button>`;
+      for (let i=1; i<=totalPages; i++) {
+        pagHtml += `<button class="page-btn${i===page?' active':''}"
+                           data-sheet="${sheet}"
+                           data-page="${i}">${i}</button>`;
       }
       pagDiv.innerHTML = pagHtml;
-      pagDiv.querySelectorAll('.page-btn').forEach(btn => {
+      pagDiv.querySelectorAll('.page-btn').forEach(btn=>{
         btn.onclick = () => {
           currentPageBySheet[btn.dataset.sheet] = +btn.dataset.page;
           renderTable(btn.dataset.sheet);
@@ -251,26 +284,19 @@
       });
     }
 
+    // 탭 전환
     function setupTabs() {
-      document.querySelectorAll('.tab-btn').forEach(btn => {
+      document.querySelectorAll('.tab-btn').forEach(btn=>{
         btn.onclick = () => {
           document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
           btn.classList.add('active');
           const key = btn.dataset.key;
-          document.querySelectorAll('.member-section, .pagination').forEach(el=>el.classList.remove('active'));
+          // 모든 섹션/페이징 숨기고
+          document.querySelectorAll('.member-section, .pagination')
+                  .forEach(el=>el.classList.remove('active'));
+          // 해당 탭만 보여주기
           document.getElementById(`section-${key}`).classList.add('active');
           document.getElementById(`pages-${key}`).classList.add('active');
         };
       });
-    }
-
-    function applyLang() {
-      const t = texts[lang];
-      document.getElementById('title').textContent = t.title;
-      document.getElementById('totalKPLabel').textContent = t.totalKP;
-      document.getElementById('discordBtn').textContent = t.discord;
-      document.getElementById('searchInput').placeholder = lang==='ko'?'멤버 이름으로 검색...':'Search by name...';
-    }
-  </script>
-</body>
-</html>
+   
