@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
   <title>3599 왕국 전쟁 통계</title>
   <style>
     :root {
@@ -87,9 +87,9 @@
   <h1 id="title">3599 왕국 전쟁 통계</h1>
 
   <div class="tabs">
-    <button class="tab-btn active" data-key="시트 1">KVK 1</button>
-    <button class="tab-btn"        data-key="시트 2">KVK 2</button>
-    <button class="tab-btn"        data-key="시트 3">KVK 3</button>
+    <button class="tab-btn active" data-key="시트1">KVK 1</button>
+    <button class="tab-btn"        data-key="시트2">KVK 2</button>
+    <button class="tab-btn"        data-key="시트3">KVK 3</button>
   </div>
 
   <div class="card">
@@ -110,190 +110,88 @@
   </div>
 
   <!-- 시트 1 -->
-  <div class="member-section active" id="section-시트 1"></div>
-  <div class="pagination active"     id="pages-시트 1"></div>
+  <div class="member-section active" id="section-시트1"></div>
+  <div class="pagination active"     id="pages-시트1"></div>
   <!-- 시트 2 -->
-  <div class="member-section"        id="section-시트 2"></div>
-  <div class="pagination"           id="pages-시트 2"></div>
+  <div class="member-section"        id="section-시트2"></div>
+  <div class="pagination"           id="pages-시트2"></div>
   <!-- 시트 3 -->
-  <div class="member-section"        id="section-시트 3"></div>
-  <div class="pagination"           id="pages-시트 3"></div>
+  <div class="member-section"        id="section-시트3"></div>
+  <div class="pagination"           id="pages-시트3"></div>
 
   <script>
     const texts = {
-      ko: {
-        title:   '3599 왕국 전쟁 통계',
-        totalKP: '총 KP (모든 참여자)',
-        discord: 'Discord 초대',
-        headers12: ['ID','멤버','총 KP'],
-        headers3:  ['ID','멤버','목표 DKP','현재 DKP','총 KP','전사자']
-      },
-      en: {
-        title:   '3599 Kingdom War Stats',
-        totalKP: 'Total KP (All Participants)',
-        discord: 'Invite Discord',
-        headers12: ['ID','Member','Total KP'],
-        headers3:  ['ID','Member','Goal DKP','Current DKP','Total KP','Casualties']
-      }
+      ko: { title:'3599 왕국 전쟁 통계', totalKP:'총 KP (모든 참여자)', discord:'Discord 초대', headers12:['ID','멤버','총 KP'], headers3:['ID','멤버','목표 DKP','현재 DKP','총 KP','전사자'] },
+      en: { title:'3599 Kingdom War Stats', totalKP:'Total KP (All Participants)', discord:'Invite Discord', headers12:['ID','Member','Total KP'], headers3:['ID','Member','Goal DKP','Current DKP','Total KP','Casualties'] }
     };
-    let lang = 'ko';
+    let lang='ko';
 
-    const sheetId = '1G2RwOq32kSubrYRtO5xt6UsaIXQBdfjKsz9r386PFso';
-    const sheets  = ['시트 1','시트 2','시트 3'];
+    const sheetId='1G2RwOq32kSubrYRtO5xt6UsaIXQBdfjKsz9r386PFso';
+    const sheets=['시트1','시트2','시트3'];
 
-    const dataBySheet        = {};
-    const pageSizeBySheet    = {};
-    const currentPageBySheet = {};
+    const dataBySheet={}, pageSizeBySheet={}, currentPageBySheet={};
 
-    // 한·영 토글
-    document.getElementById('langToggle').onclick = () => {
-      lang = lang === 'ko' ? 'en' : 'ko';
-      applyLang();
-    };
+    document.getElementById('langToggle').onclick=()=>{lang=lang==='ko'?'en':'ko'; applyLang();};
+    document.getElementById('pageSizeSelect').onchange=e=>{sheets.forEach(s=>{pageSizeBySheet[s]=+e.target.value; currentPageBySheet[s]=1; renderTable(s);});};
+    document.getElementById('searchInput').oninput=()=>{sheets.forEach(renderTable);};
 
-    // 페이지 수 변경
-    document.getElementById('pageSizeSelect').onchange = e => {
-      sheets.forEach(sheet => {
-        pageSizeBySheet[sheet] = +e.target.value;
-        currentPageBySheet[sheet] = 1;
-        renderTable(sheet);
-      });
-    };
-
-    // 검색 필터
-    document.getElementById('searchInput').oninput = () => {
-      sheets.forEach(renderTable);
-    };
-
-    // 구글 시트 데이터 가져오기
-    async function fetchAll(sheet) {
-      const url = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:json&sheet=${encodeURIComponent(sheet)}`;
-      const txt = await fetch(url).then(r => r.text());
-      const json = JSON.parse(txt.substr(47).slice(0,-2));
-      const rows = json.table.rows.map(r => r.c.map(c => c?.v || ''));
-      if (sheet === '시트 3') {
-        // ID, 멤버, 목표 DKP, 현재 DKP, 총 KP, 전사자
-        return rows.map(r => ({
-          id:           r[0],
-          name:         r[1],
-          goalDKP:      Number(r[2]||0),
-          currentDKP:   Number(r[3]||0),
-          totalKP:      Number(r[4]||0),
-          casualties:   Number(r[5]||0)
-        }));
-      } else {
-        // 시트 1/2: ID, 멤버, 총 KP
-        return rows.map(r => ({
-          id:      r[1],
-          name:    r[2],
-          totalKP: Number(r[3]||0)
-        }));
-      }
+    async function fetchAll(sheet){
+      const url=`https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:json&sheet=${encodeURIComponent(sheet)}`;
+      const txt=await fetch(url).then(r=>r.text());
+      const json=JSON.parse(txt.substr(47).slice(0,-2));
+      const rows=json.table.rows.map(r=>r.c.map(c=>c?.v||''));
+      if(sheet==='시트3') return rows.map(r=>({id:r[0],name:r[1],goalDKP:Number(r[2]||0),currentDKP:Number(r[3]||0),totalKP:Number(r[4]||0),casualties:Number(r[5]||0)}));
+      return rows.map(r=>({id:r[1],name:r[2],totalKP:Number(r[3]||0)}));
     }
 
-    (async () => {
-      let grandTotal = 0;
-      for (const sheet of sheets) {
-        let data = await fetchAll(sheet);
-        // 상위 200개로 제한
-        data = data.sort((a,b) => {
-          const aVal = sheet === '시트 3' ? a.totalKP : a.totalKP;
-          const bVal = sheet === '시트 3' ? b.totalKP : b.totalKP;
-          return bVal - aVal;
-        }).slice(0,200);
-        dataBySheet[sheet]        = data;
-        grandTotal               += data.reduce((s,m) => s + (m.totalKP||0), 0);
-        pageSizeBySheet[sheet]    = 10;
-        currentPageBySheet[sheet] = 1;
+    (async()=>{
+      let grandTotal=0;
+      for(const sheet of sheets){
+        let data=await fetchAll(sheet);
+        data=data.sort((a,b)=>(b.totalKP||0)-(a.totalKP||0)).slice(0,200);
+        dataBySheet[sheet]=data;
+        grandTotal+=data.reduce((s,m)=>s+(m.totalKP||0),0);
+        pageSizeBySheet[sheet]=10;
+        currentPageBySheet[sheet]=1;
       }
-      document.getElementById('totalKP').textContent = grandTotal.toLocaleString();
+      document.getElementById('totalKP').textContent=grandTotal.toLocaleString();
       sheets.forEach(renderTable);
-      setupTabs();
-      applyLang();
+      setupTabs(); applyLang();
     })();
 
-    // 테이블 렌더링
-    function renderTable(sheet) {
-      const data = dataBySheet[sheet];
-      const q    = document.getElementById('searchInput').value.toLowerCase();
-      const filtered = data.filter(m =>
-        m.name.toLowerCase().includes(q) ||
-        m.id.toString().toLowerCase().includes(q)
-      );
-      const ps = pageSizeBySheet[sheet];
-      const totalPages = Math.ceil(filtered.length/ps) || 1;
-      let page = currentPageBySheet[sheet] || 1;
-      if (page > totalPages) page = 1;
-      currentPageBySheet[sheet] = page;
-
-      const start = (page-1)*ps;
-      const pageData = filtered.slice(start, start+ps);
-
-      const sec = document.getElementById(`section-${sheet}`);
-      // 헤더 선택
-      const headers = sheet === '시트 3' ? texts[lang].headers3 : texts[lang].headers12;
-      let html = `<h2>${sheet.replace('시트','KVK')}</h2>
-                  <table>
-                    <thead>
-                      <tr>${headers.map(h=>`<th>${h}</th>`).join('')}</tr>
-                    </thead><tbody>`;
-      pageData.forEach(m => {
-        if (sheet === '시트 3') {
-          html += `<tr>
-                     <td>${m.id}</td>
-                     <td>${m.name}</td>
-                     <td>${m.goalDKP.toLocaleString()}</td>
-                     <td>${m.currentDKP.toLocaleString()}</td>
-                     <td>${m.totalKP.toLocaleString()}</td>
-                     <td>${m.casualties.toLocaleString()}</td>
-                   </tr>`;
-        } else {
-          html += `<tr>
-                     <td>${m.id}</td>
-                     <td>${m.name}</td>
-                     <td>${m.totalKP.toLocaleString()}</td>
-                   </tr>`;
-        }
-      });
-      html += '</tbody></table>';
-      sec.innerHTML = html;
-
-      const pag = document.getElementById(`pages-${sheet}`);
-      let btns = '';
-      for (let i=1; i<=totalPages; i++) {
-        btns += `<button class="page-btn${i===page?' active':''}" data-sheet="${sheet}" data-page="${i}">${i}</button>`;
-      }
-      pag.innerHTML = btns;
-      pag.querySelectorAll('.page-btn').forEach(btn => {
-        btn.onclick = () => {
-          currentPageBySheet[btn.dataset.sheet] = +btn.dataset.page;
-          renderTable(btn.dataset.sheet);
-        };
-      });
+    function renderTable(sheet){
+      const data=dataBySheet[sheet]; const q=document.getElementById('searchInput').value.toLowerCase();
+      const filtered=data.filter(m=>m.name.toLowerCase().includes(q)||m.id.toString().toLowerCase().includes(q));
+      const ps=pageSizeBySheet[sheet], tp=Math.ceil(filtered.length/ps)||1;
+      let pg=currentPageBySheet[sheet]; if(pg>tp) pg=1; currentPageBySheet[sheet]=pg;
+      const start=(pg-1)*ps; const pageData=filtered.slice(start,start+ps);
+      const sec=document.getElementById(`section-${sheet}`);
+      const headers=sheet==='시트3'?texts[lang].headers3:texts[lang].headers12;
+      let html=`<h2>${sheet.replace('시트','KVK')}</h2><table><thead><tr>${headers.map(h=>`<th>${h}</th>`).join('')}</tr></thead><tbody>`;
+      pageData.forEach(m=>{if(sheet==='시트3'){html+=`<tr><td>${m.id}</td><td>${m.name}</td><td>${m.goalDKP.toLocaleString()}</td><td>${m.currentDKP.toLocaleString()}</td><td>${m.totalKP.toLocaleString()}</td><td>${m.casualties.toLocaleString()}</td></tr>`;}else{html+=`<tr><td>${m.id}</td><td>${m.name}</td><td>${m.totalKP.toLocaleString()}</td></tr>`;}});
+      html+='</tbody></table>'; sec.innerHTML=html;
+      const pag=document.getElementById(`pages-${sheet}`);
+      let btns=''; for(let i=1;i<=tp;i++) btns+=`<button class="page-btn${i===pg?' active':''}" data-sheet="${sheet}" data-page="${i}">${i}</button>`;
+      pag.innerHTML=btns; pag.querySelectorAll('.page-btn').forEach(b=>b.onclick=()=>{currentPageBySheet[b.dataset.sheet]=+b.dataset.page;renderTable(b.dataset.sheet);});
     }
 
-    // 탭 전환
-    function setupTabs() {
-      document.querySelectorAll('.tab-btn').forEach(b => {
-        b.onclick = () => {
-          document.querySelectorAll('.tab-btn').forEach(x=>x.classList.remove('active'));
-          b.classList.add('active');
-          const key = b.dataset.key;
-          document.querySelectorAll('.member-section, .pagination')
-                  .forEach(el=>el.classList.remove('active'));
-          document.getElementById(`section-${key}`).classList.add('active');
-          document.getElementById(`pages-${key}`).classList.add('active');
-        };
-      });
+    function setupTabs(){
+      document.querySelectorAll('.tab-btn').forEach(b=>b.onclick=()=>{
+        document.querySelectorAll('.tab-btn').forEach(x=>x.classList.remove('active'));
+        b.classList.add('active');
+        const key=b.dataset.key;
+        document.querySelectorAll('.member-section, .pagination').forEach(el=>el.classList.remove('active'));
+        document.getElementById(`section-${key}`).classList.add('active');
+        document.getElementById(`pages-${key}`).classList.add('active');
+      }));
     }
 
-    // 한·영 적용
-    function applyLang() {
-      const t = texts[lang];
-      document.getElementById('title').textContent        = t.title;
-      document.getElementById('totalKPLabel').textContent = t.totalKP;
-      document.getElementById('discordBtn').textContent   = t.discord;
-      document.getElementById('searchInput').placeholder  = lang==='ko'? '멤버 이름 또는 ID 검색…' : 'Search by name or ID…';
+    function applyLang(){
+      const t=texts[lang];
+      document.getElementById('title').textContent=t.title;
+      document.getElementById('totalKPLabel').textContent=t.totalKP;
+      document.getElementById('discordBtn').textContent=t.discord;
+      document.getElementById('searchInput').placeholder=lang==='ko'?'멤버 이름 또는 ID 검색…':'Search by name or ID…';
     }
   </script>
 </body>
