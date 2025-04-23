@@ -77,14 +77,9 @@
       color: var(--text);
     }
     /* 탭별 섹션 · 페이징 숨기기/보이기 */
-    .member-section,
-    .pagination {
-      display: none;
-    }
-    .member-section.active,
-    .pagination.active {
-      display: block;
-    }
+    .member-section, .pagination { display:none; }
+    .member-section.active, .pagination.active { display:block; }
+
     .member-section {
       max-width:800px; margin:20px auto; text-align:left;
     }
@@ -101,11 +96,9 @@
     }
     th { background:#2A2A2A; }
     tr:nth-child(even) { background:rgba(30,30,30,0.3); }
+
     .pagination {
       text-align:center; margin:10px 0;
-    }
-    .page-size {
-      margin-left:10px; padding:4px;
     }
     .page-btn {
       margin:0 4px; padding:4px 8px; border:none;
@@ -118,6 +111,7 @@
     .page-btn:hover {
       background:var(--gold); color:#121212;
     }
+    .page-size { margin-left:10px; padding:4px; }
   </style>
 </head>
 <body>
@@ -148,155 +142,12 @@
 
   <!-- 시트 1 -->
   <div class="member-section active" id="section-시트 1"></div>
-  <div class="pagination active" id="pages-시트 1"></div>
+  <div class="pagination active"   id="pages-시트 1"></div>
   <!-- 시트 2 -->
-  <div class="member-section" id="section-시트 2"></div>
-  <div class="pagination"     id="pages-시트 2"></div>
+  <div class="member-section"      id="section-시트 2"></div>
+  <div class="pagination"         id="pages-시트 2"></div>
 
   <script>
     const texts = {
       ko: {
-        title:   '3599 왕국 전쟁 통계',
-        totalKP: '총 KP (모든 참여자)',
-        discord: 'Discord 초대',
-        headers: ['차수','ID','멤버','총 DKP']
-      },
-      en: {
-        title:   '3599 Kingdom War Stats',
-        totalKP: 'Total KP (All Participants)',
-        discord: 'Invite Discord',
-        headers: ['Round','ID','Member','Total DKP']
-      }
-    };
-    let lang = 'ko';
-
-    const sheetId = '1G2RwOq32kSubrYRtO5xt6UsaIXQBdfjKsz9r386PFso',
-          sheets  = ['시트 1','시트 2'];
-
-    const dataBySheet        = {},
-          pageSizeBySheet    = {},
-          currentPageBySheet = {};
-
-    // 언어 토글
-    document.getElementById('langToggle').onclick = () => {
-      lang = lang === 'ko' ? 'en' : 'ko';
-      applyLang();
-    };
-
-    // 표시 수 변경
-    document.getElementById('pageSizeSelect').onchange = e => {
-      sheets.forEach(sheet => {
-        pageSizeBySheet[sheet] = +e.target.value;
-        currentPageBySheet[sheet] = 1;
-        renderTable(sheet);
-      });
-    };
-
-    // 검색 필터
-    document.getElementById('searchInput').oninput = () => {
-      sheets.forEach(renderTable);
-    };
-
-    // 구글 시트 데이터 로드
-    async function fetchAll(sheet) {
-      const url = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:json&sheet=${encodeURIComponent(sheet)}`;
-      const txt = await fetch(url).then(r=>r.text());
-      const json = JSON.parse(txt.substr(47).slice(0,-2));
-      return json.table.rows
-        .map(r => r.c.map(c => c?.v||''))
-        .map(r => ({
-          round: sheet,
-          id:    r[1],
-          name:  r[2],
-          dkp:   Number(r[3]||0)
-        }));
-    }
-
-    (async () => {
-      let totalKP = 0;
-
-      for (const sheet of sheets) {
-        // 내림차순 정렬 후 상위 200개만
-        let data = await fetchAll(sheet);
-        data = data.sort((a,b)=>b.dkp - a.dkp).slice(0,200);
-
-        dataBySheet[sheet]        = data;
-        totalKP                 += data.reduce((s,m)=>s+m.dkp, 0);
-        pageSizeBySheet[sheet]    = 10;
-        currentPageBySheet[sheet] = 1;
-      }
-
-      document.getElementById('totalKP').textContent = totalKP.toLocaleString();
-
-      sheets.forEach(sheet=>{
-        renderTable(sheet);
-      });
-
-      setupTabs();
-      applyLang();
-    })();
-
-    // 테이블 렌더링
-    function renderTable(sheet) {
-      const all    = dataBySheet[sheet];
-      const query  = document.getElementById('searchInput').value.toLowerCase();
-      const filtered = all.filter(m=>m.name.toLowerCase().includes(query));
-
-      const pageSize   = pageSizeBySheet[sheet],
-            totalPages = Math.ceil(filtered.length / pageSize) || 1;
-      let   page       = currentPageBySheet[sheet];
-      if (page > totalPages) page = 1;
-      currentPageBySheet[sheet] = page;
-
-      const start    = (page-1)*pageSize,
-            pageData = filtered.slice(start, start+pageSize);
-
-      const sec = document.getElementById(`section-${sheet}`);
-      let html = `<h2>${sheet.replace('시트','KVK')}</h2>
-                  <table>
-                    <thead>
-                      <tr>${texts[lang].headers.map(h=>`<th>${h}</th>`).join('')}</tr>
-                    </thead><tbody>`;
-      pageData.forEach(m=>{
-        html += `<tr>
-                   <td>${m.round.replace('시트','KVK')}</td>
-                   <td>${m.id}</td>
-                   <td>${m.name}</td>
-                   <td>${m.dkp.toLocaleString()}</td>
-                 </tr>`;
-      });
-      html += '</tbody></table>';
-      sec.innerHTML = html;
-
-      const pagDiv = document.getElementById(`pages-${sheet}`);
-      let pagHtml = '';
-      for (let i=1; i<=totalPages; i++) {
-        pagHtml += `<button class="page-btn${i===page?' active':''}"
-                           data-sheet="${sheet}"
-                           data-page="${i}">${i}</button>`;
-      }
-      pagDiv.innerHTML = pagHtml;
-      pagDiv.querySelectorAll('.page-btn').forEach(btn=>{
-        btn.onclick = () => {
-          currentPageBySheet[btn.dataset.sheet] = +btn.dataset.page;
-          renderTable(btn.dataset.sheet);
-        };
-      });
-    }
-
-    // 탭 전환
-    function setupTabs() {
-      document.querySelectorAll('.tab-btn').forEach(btn=>{
-        btn.onclick = () => {
-          document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
-          btn.classList.add('active');
-          const key = btn.dataset.key;
-          // 모든 섹션/페이징 숨기고
-          document.querySelectorAll('.member-section, .pagination')
-                  .forEach(el=>el.classList.remove('active'));
-          // 해당 탭만 보여주기
-          document.getElementById(`section-${key}`).classList.add('active');
-          document.getElementById(`pages-${key}`).classList.add('active');
-        };
-      });
-   
+        title:   '3599 왕
