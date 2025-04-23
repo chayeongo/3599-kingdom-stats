@@ -150,4 +150,148 @@
   <script>
     const texts = {
       ko: {
-        title:   '3599 왕
+        title:   '3599 왕국 전쟁 통계',
+        totalKP: '총 KP (모든 참여자)',
+        discord: 'Discord 초대',
+        headers: ['차수','ID','멤버','총 DKP']
+      },
+      en: {
+        title:   '3599 Kingdom War Stats',
+        totalKP: 'Total KP (All Participants)',
+        discord: 'Invite Discord',
+        headers: ['Round','ID','Member','Total DKP']
+      }
+    };
+    let lang = 'ko';
+
+    const sheetId = '1G2RwOq32kSubrYRtO5xt6UsaIXQBdfjKsz9r386PFso';
+    const sheets  = ['시트 1','시트 2'];
+
+    const dataBySheet        = {};
+    const pageSizeBySheet    = {};
+    const currentPageBySheet = {};
+
+    // 한·영 토글
+    document.getElementById('langToggle').onclick = () => {
+      lang = lang==='ko' ? 'en' : 'ko';
+      applyLang();
+    };
+
+    // 페이징 사이즈 변경
+    document.getElementById('pageSizeSelect').onchange = e => {
+      sheets.forEach(sheet => {
+        pageSizeBySheet[sheet] = +e.target.value;
+        currentPageBySheet[sheet] = 1;
+        renderTable(sheet);
+      });
+    };
+
+    // 검색 필터
+    document.getElementById('searchInput').oninput = () => {
+      sheets.forEach(renderTable);
+    };
+
+    // 구글 시트 로드
+    async function fetchAll(sheet) {
+      const url = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:json&sheet=${encodeURIComponent(sheet)}`;
+      const txt = await fetch(url).then(r=>r.text());
+      const json = JSON.parse(txt.substr(47).slice(0,-2));
+      return json.table.rows
+        .map(r=>r.c.map(c=>c?.v||''))
+        .map(r=>({ round:sheet, id:r[1], name:r[2], dkp:Number(r[3]||0) }));
+    }
+
+    (async()=>{
+      let totalKP=0;
+      for(const sheet of sheets) {
+        let data = await fetchAll(sheet);
+        // 내림차순 정렬 후 상위 200개만
+        data = data.sort((a,b)=>b.dkp - a.dkp).slice(0,200);
+
+        dataBySheet[sheet]        = data;
+        totalKP                 += data.reduce((s,m)=>s+m.dkp,0);
+        pageSizeBySheet[sheet]    = 10;
+        currentPageBySheet[sheet] = 1;
+      }
+      document.getElementById('totalKP').textContent = totalKP.toLocaleString();
+      sheets.forEach(renderTable);
+      setupTabs();
+      applyLang();
+    })();
+
+    // 테이블 렌더링
+    function renderTable(sheet) {
+      const data  = dataBySheet[sheet];
+      const q     = document.getElementById('searchInput').value.toLowerCase();
+      const filt  = data.filter(m=>m.name.toLowerCase().includes(q));
+      const ps    = pageSizeBySheet[sheet];
+      const total = Math.ceil(filt.length/ps)||1;
+      let   pg    = currentPageBySheet[sheet];
+      if(pg>total) pg=1;
+      currentPageBySheet[sheet]=pg;
+
+      const start = (pg-1)*ps;
+      const pageData = filt.slice(start,start+ps);
+
+      const sec = document.getElementById(`section-${sheet}`);
+      let html = `<h2>${sheet.replace('시트','KVK')}</h2>
+                  <table><thead>
+                    <tr>${texts[lang].headers.map(h=>`<th>${h}</th>`).join('')}</tr>
+                  </thead><tbody>`;
+      pageData.forEach(m=>{
+        html+= `<tr>
+                  <td>${m.round.replace('시트','KVK')}</td>
+                  <td>${m.id}</td>
+                  <td>${m.name}</td>
+                  <td>${m.dkp.toLocaleString()}</td>
+                </tr>`;
+      });
+      html+= '</tbody></table>';
+      sec.innerHTML = html;
+
+      const pag = document.getElementById(`pages-${sheet}`);
+      let btns = '';
+      for(let i=1;i<=total;i++){
+        btns+= `<button class="page-btn${i===pg?' active':''}"
+                        data-sheet="${sheet}"
+                        data-page="${i}">${i}</button>`;
+      }
+      pag.innerHTML = btns;
+      pag.querySelectorAll('.page-btn').forEach(b=>{
+        b.onclick = ()=>{ 
+          currentPageBySheet[b.dataset.sheet]=+b.dataset.page;
+          renderTable(b.dataset.sheet);
+        };
+      });
+    }
+
+    // 탭 전환
+    function setupTabs() {
+      document.querySelectorAll('.tab-btn').forEach(btn=>{
+        btn.onclick = ()=>{
+          document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+          btn.classList.add('active');
+          const key=btn.dataset.key;
+          // 숨기기
+          document.querySelectorAll('.member-section, .pagination')
+            .forEach(el=>el.classList.remove('active'));
+          // 보이기
+          document.getElementById(`section-${key}`).classList.add('active');
+          document.getElementById(`pages-${key}`).classList.add('active');
+        };
+      });
+    }
+
+    // 언어 적용
+    function applyLang(){
+      const t=texts[lang];
+      document.getElementById('title').textContent        = t.title;
+      document.getElementById('totalKPLabel').textContent = t.totalKP;
+      document.getElementById('discordBtn').textContent   = t.discord;
+      document.getElementById('searchInput').placeholder  =
+        lang==='ko'? '멤버 이름으로 검색…' : 'Search by name…';
+    }
+  </script>
+
+</body>
+</html>
