@@ -39,17 +39,17 @@
   <button id="langToggle">EN</button>
   <h1 id="title">3599 왕국 전쟁 통계</h1>
   <div class="tabs">
-    <button class="tab-btn active" data-key="sheet1">KVK 1</button>
-    <button class="tab-btn"        data-key="sheet2">KVK 2</button>
-    <button class="tab-btn"        data-key="sheet3">KVK 3</button>
+    <button class="tab-btn active" data-key="sheet1">KVK 1</button>
+    <button class="tab-btn"        data-key="sheet2">KVK 2</button>
+    <button class="tab-btn"        data-key="sheet3">KVK 3</button>
   </div>
   <div class="card">
-    <strong id="totalKPLabel">총 KP (모든 참여자)</strong>
-    <p id="totalKP">로딩 중...</p>
+    <strong id="totalKPLabel">총 KP (모든 참여자)</strong>
+    <p id="totalKP">로딩 중...</p>
   </div>
-  <a id="discordBtn" class="btn" href="https://discord.gg/bt9grH4U3w" target="_blank">Discord 초대</a>
-  <input type="text" id="searchInput" class="search-box" placeholder="멤버 이름 또는 ID 검색…" />
-  <div class="page-controls">표시 수: <select id="pageSizeSelect" class="page-size"><option>10</option><option>20</option><option>50</option></select></div>
+  <a id="discordBtn" class="btn" href="https://discord.gg/bt9grH4U3w" target="_blank">Discord 초대</a>
+  <input type="text" id="searchInput" class="search-box" placeholder="멤버 이름 또는 ID 검색…" />
+  <div class="page-controls">표시 수: <select id="pageSizeSelect" class="page-size"><option>10</option><option>20</option><option>50</option></select></div>
 
   <div class="member-section active" id="section-sheet1"></div>
   <div class="pagination active"     id="pages-sheet1"></div>
@@ -59,10 +59,10 @@
   <div class="pagination"           id="pages-sheet3"></div>
 
   <script>
-    const sheetNames = { sheet1:'시트 1', sheet2:'시트 2', sheet3:'시트 3' };
+    const sheetNames = { sheet1:'시트 1', sheet2:'시트 2', sheet3:'시트 3' };
     const texts = {
-      ko: { title:'3599 왕국 전쟁 통계', totalKP:'총 KP (모든 참여자)', discord:'Discord 초대', headers12:['ID','멤버','총 KP'], headers3:['ID','멤버','목표 DKP','현재 DKP','총 KP','전사자'] },
-      en: { title:'3599 Kingdom War Stats', totalKP:'Total KP (All Participants)', discord:'Invite Discord', headers12:['ID','Member','Total KP'], headers3:['ID','Member','Goal DKP','Current DKP','Total KP','Casualties'] }
+      ko: { title:'3599 왕국 전쟁 통계', totalKP:'총 KP (모든 참여자)', discord:'Discord 초대', headers12:['ID','멤버','총 KP'], headers3:['ID','멤버','목표 DKP','현재 DKP','총 KP','전사자'] },
+      en: { title:'3599 Kingdom War Stats', totalKP:'Total KP (All Participants)', discord:'Invite Discord', headers12:['ID','Member','Total KP'], headers3:['ID','Member','Goal DKP','Current DKP','Total KP','Casualties'] }
     };
     let lang='ko';
     const sheetId='1G2RwOq32kSubrYRtO5xt6UsaIXQBdfjKsz9r386PFso';
@@ -142,7 +142,7 @@
     function setupTabs(){ document.querySelectorAll('.tab-btn').forEach(btn=>btn.onclick=()=>{
         document.querySelectorAll('.tab-btn').forEach(x=>x.classList.remove('active'));
         document.querySelectorAll('.member-section, .pagination').forEach(x=>x.classList.remove('active'));
-        btn.classList.add('active'); const key=btn.dataset-key;
+        btn.classList.add('active'); const key = btn.dataset.key;
         document.getElementById('section-'+key).classList.add('active');
         document.getElementById('pages-'+key).classList.add('active');
     })); }
@@ -151,7 +151,7 @@
       document.getElementById('title').textContent=t.title;
       document.getElementById('totalKPLabel').textContent=t.totalKP;
       document.getElementById('discordBtn').textContent=t.discord;
-      document.getElementById('searchInput').placeholder = lang==='ko'?'멤버 이름 또는 ID 검색…':'Search by name or ID…';
+      document.getElementById('searchInput').placeholder = lang==='ko'?'멤버 이름 또는 ID 검색…':'Search by name or ID…';
     }
   </script>
 </body>
