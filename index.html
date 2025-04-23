@@ -35,61 +35,22 @@
       cursor:pointer;
     }
     .tabs { display:flex; justify-content:center; gap:10px; margin-bottom:10px; }
-    .tab-btn {
-      padding:8px 16px; background:var(--card);
-      border:none; border-radius:4px;
-      color:var(--text); cursor:pointer;
-    }
-    .tab-btn.active {
-      background:var(--gold); color:#121212;
-    }
-    .card {
-      background:var(--card); margin:0 auto 20px;
-      padding:15px; width:300px; border-radius:8px;
-    }
+    .tab-btn { padding:8px 16px; background:var(--card); border:none; border-radius:4px; color:var(--text); cursor:pointer; }
+    .tab-btn.active { background:var(--gold); color:#121212; }
+    .card { background:var(--card); margin:0 auto 20px; padding:15px; width:300px; border-radius:8px; }
     .card strong { display:block; margin-bottom:8px; }
-    .btn {
-      display:inline-block; background:#7289DA; color:#fff;
-      text-decoration:none; padding:8px 16px;
-      border-radius:4px; margin-bottom:20px;
-    }
-    .search-box {
-      display:block; margin:10px auto; padding:8px;
-      width:100%; max-width:400px;
-      border:1px solid #555; border-radius:4px;
-      background:var(--card); color:var(--text);
-    }
-    /* 탭 섹션 및 페이징 기본 숨김 */
-    .member-section,
-    .pagination {
-      display: none;
-    }
-    /* active 클래스가 붙은 것만 보이기 */
-    .member-section.active,
-    .pagination.active {
-      display: block;
-    }
-    table {
-      width:100%; border-collapse:collapse;
-      background:var(--card); margin-top:10px;
-    }
+    .btn { display:inline-block; background:#7289DA; color:#fff; text-decoration:none; padding:8px 16px; border-radius:4px; margin-bottom:20px; }
+    .search-box { display:block; margin:10px auto; padding:8px; width:100%; max-width:400px; border:1px solid #555; border-radius:4px; background:var(--card); color:var(--text); }
+    .member-section, .pagination { display: none; }
+    .member-section.active, .pagination.active { display: block; }
+    table { width:100%; border-collapse:collapse; background:var(--card); margin-top:10px; }
     th, td { border:1px solid #444; padding:8px; }
     th { background:#2A2A2A; }
     tr:nth-child(even) { background:rgba(30,30,30,0.3); }
     .pagination { text-align:center; margin:10px 0; }
-    .page-btn {
-      margin:0 4px; padding:4px 8px;
-      border:none; background:var(--card);
-      color:var(--text); border-radius:4px;
-      cursor:pointer;
-    }
-    .page-btn.active {
-      background:var(--gold); color:#121212;
-    }
-    /* 페이지 크기 선택 박스는 항상 보이도록 별도 스타일 */
-    .page-controls {
-      text-align:center; margin:10px 0;
-    }
+    .page-btn { margin:0 4px; padding:4px 8px; border:none; background:var(--card); color:var(--text); border-radius:4px; cursor:pointer; }
+    .page-btn.active { background:var(--gold); color:#121212; }
+    .page-controls { text-align:center; margin:10px 0; }
     .page-controls select { padding:4px; }
   </style>
 </head>
@@ -98,9 +59,9 @@
   <h1 id="title">3599 DKP RANK</h1>
 
   <div class="tabs">
-    <button class="tab-btn active" data-key="sheet1">KVK 1</button>
-    <button class="tab-btn" data-key="sheet2">KVK 2</button>
-    <button class="tab-btn" data-key="sheet3">KVK 3</button>
+    <button class="tab-btn"        data-key="sheet1">KVK 1</button>
+    <button class="tab-btn"        data-key="sheet2">KVK 2</button>
+    <button class="tab-btn active" data-key="sheet3">KVK 3</button>
   </div>
 
   <div class="card">
@@ -121,31 +82,23 @@
   </div>
 
   <!-- KVK 1 -->
-  <div class="member-section active" id="section-sheet1"></div>
-  <div class="pagination active" id="pages-sheet1"></div>
+  <div class="member-section"        id="section-sheet1"></div>
+  <div class="pagination"           id="pages-sheet1"></div>
   <!-- KVK 2 -->
-  <div class="member-section" id="section-sheet2"></div>
-  <div class="pagination" id="pages-sheet2"></div>
+  <div class="member-section"        id="section-sheet2"></div>
+  <div class="pagination"           id="pages-sheet2"></div>
   <!-- KVK 3 -->
-  <div class="member-section" id="section-sheet3"></div>
-  <div class="pagination" id="pages-sheet3"></div>
+  <div class="member-section active" id="section-sheet3"></div>
+  <div class="pagination active"     id="pages-sheet3"></div>
 
   <script>
     const sheetNames = { sheet1: '시트 1', sheet2: '시트 2', sheet3: '시트 3' };
     const texts = {
       ko: {
-        title: '3599 DKP RANK',
-        totalKP: '총 KP (모든 참여자)',
-        discord: 'Discord 초대',
-        headers12: ['ID','멤버','총 KP'],
-        headers3: ['ID','멤버','목표 DKP','현재 DKP','총 KP','전사자']
+        title: '3599 DKP RANK', totalKP: '총 KP (모든 참여자)', discord: 'Discord 초대', headers12: ['ID','멤버','총 KP'], headers3: ['ID','멤버','목표 DKP','현재 DKP','총 KP','전사자']
       },
       en: {
-        title:   '3599 DKP RANK',
-        totalKP: 'Total KP (All Participants)',
-        discord: 'Invite Discord',
-        headers12: ['ID','Member','Total KP'],
-        headers3:  ['UID','Name','DKP Goal','Current DKP','KP gained','Death']
+        title: '3599 DKP RANK', totalKP: 'Total KP (All Participants)', discord: 'Invite Discord', headers12: ['UID','Name','DKP'], headers3: ['UID','Name','DKP Goal','Current DKP','KP gained','Death']
       }
     };
     let lang = 'ko';
@@ -153,125 +106,62 @@
     const keys = ['sheet1','sheet2','sheet3'];
     const dataBySheet = {}, pageSize = {}, currentPage = {};
 
-    // 언어 토글
-    document.getElementById('langToggle').onclick = () => {
-      lang = lang === 'ko' ? 'en' : 'ko';
-      applyLang();
-    };
-    // 페이지 크기 변경
-    document.getElementById('pageSizeSelect').onchange = e => {
-      keys.forEach(k => {
-        pageSize[k] = Number(e.target.value);
-        currentPage[k] = 1;
-        renderTable(k);
-      });
-    };
-    // 검색 필터
+    document.getElementById('langToggle').onclick = () => { lang = lang==='ko'?'en':'ko'; applyLang(); };
+    document.getElementById('pageSizeSelect').onchange = e => { keys.forEach(k => { pageSize[k] = +e.target.value; currentPage[k] = 1; renderTable(k); }); };
     document.getElementById('searchInput').oninput = () => keys.forEach(renderTable);
 
-    // 구글 시트 데이터 로딩
     async function fetchAll(key) {
-      const sheet = sheetNames[key];
       const res = await fetch(
-        `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?` +
-        `tqx=out:json&sheet=${encodeURIComponent(sheet)}`
+        `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?`+
+        `tqx=out:json&sheet=${encodeURIComponent(sheetNames[key])}`
       );
-      const txt = await res.text();
-      const json = JSON.parse(txt.substr(47).slice(0,-2));
-      const rows = json.table.rows.map(r => r.c.map(c => c?.v||''));
-      if(key==='sheet3') {
-        return rows.map(r => ({
-          id: String(r[0]||''),
-          name: String(r[1]||''),
-          goalDKP: Number(r[2]||0),
-          currentDKP: Number(r[3]||0),
-          totalKP: Number(r[4]||0),
-          casualties: Number(r[5]||0)
-        }));
-      }
-      return rows.map(r => ({ id: String(r[1]||''), name: String(r[2]||''), totalKP: Number(r[3]||0) }));
+      const txt = await res.text(); const json = JSON.parse(txt.substr(47).slice(0,-2));
+      const rows = json.table.rows.map(r=>r.c.map(c=>c?.v||''));
+      if(key==='sheet3') return rows.map(r=>({id:String(r[0]),name:String(r[1]),goalDKP:+r[2]||0,currentDKP:+r[3]||0,totalKP:+r[4]||0,casualties:+r[5]||0}));
+      return rows.map(r=>({id:String(r[1]),name:String(r[2]),totalKP:+r[3]||0}));
     }
 
-    (async ()=>{
-      let grandTotal = 0;
-      for(const k of keys) {
-        let data = await fetchAll(k);
-        data.sort((a,b)=>(b.totalKP||0)-(a.totalKP||0));
-        data = data.slice(0,200);
-        dataBySheet[k] = data;
-        grandTotal += data.reduce((s,m)=>s+(m.totalKP||0),0);
-        pageSize[k] = 10;
-        currentPage[k] = 1;
-      }
-      document.getElementById('totalKP').textContent = grandTotal.toLocaleString();
-      keys.forEach(renderTable);
-      setupTabs(); applyLang();
+    (async()=>{
+      let grand=0; for(const k of keys){ let d=await fetchAll(k); d.sort((a,b)=>(b.totalKP||0)-(a.totalKP||0)); d=d.slice(0,200); dataBySheet[k]=d; grand+=d.reduce((s,m)=>s+(m.totalKP||0),0); pageSize[k]=10; currentPage[k]=1; }
+      document.getElementById('totalKP').textContent = grand.toLocaleString(); keys.forEach(renderTable); setupTabs(); applyLang();
     })();
 
-    // 테이블 렌더링
     function renderTable(key) {
       const data = dataBySheet[key] || [];
-      const query = document.getElementById('searchInput').value.toLowerCase();
-      const filtered = data.filter(m =>
-        m.name.toLowerCase().includes(query) || m.id.toLowerCase().includes(query)
-      );
-      const ps = pageSize[key];
-      const totalPages = Math.max(Math.ceil(filtered.length/ps),1);
-      let pg = currentPage[key] > totalPages ? 1 : currentPage[key];
-      currentPage[key] = pg;
-      const sliceStart = (pg-1)*ps;
-      const pageData = filtered.slice(sliceStart, sliceStart+ps);
-
+      const q = document.getElementById('searchInput').value.toLowerCase();
+      const filt = data.filter(m=>m.name.toLowerCase().includes(q)||m.id.toLowerCase().includes(q));
+      const ps = pageSize[key], tp = Math.max(Math.ceil(filt.length/ps),1);
+      let pg = currentPage[key]>tp?1:currentPage[key]; currentPage[key]=pg;
+      const pageData = filt.slice((pg-1)*ps,(pg-1)*ps+ps);
       const sec = document.getElementById(`section-${key}`);
-      const hdrs = key==='sheet3' ? texts[lang].headers3 : texts[lang].headers12;
-      let html = `<h2>${sheetNames[key].replace('시트','KVK')}</h2>`;
-      html += '<table><thead><tr>' + hdrs.map(h=>`<th>${h}</th>`).join('') + '</tr></thead><tbody>';
-      pageData.forEach(m=>{
-        html += '<tr>';
-        html += `<td>${m.id}</td><td>${m.name}</td>`;
-        if(key==='sheet3'){ html += `<td>${m.goalDKP.toLocaleString()}</td><td>${m.currentDKP.toLocaleString()}</td>`; }
-        html += `<td>${m.totalKP.toLocaleString()}</td>`;
-        if(key==='sheet3'){ html += `<td>${m.casualties.toLocaleString()}</td>`; }
-        html += '</tr>';
-      });
-      html += '</tbody></table>';
+      const hdrs = key==='sheet3'?texts[lang].headers3:texts[lang].headers12;
+      let html = `<h2>${sheetNames[key].replace('시트','KVK')}</h2><table><thead><tr>`+hdrs.map(h=>`<th>${h}</th>`).join('')+`</tr></thead><tbody>`;
+      pageData.forEach(m=>{ html+='<tr>'; html+=`<td>${m.id}</td><td>${m.name}</td>`; if(key==='sheet3'){ html+=`<td>${m.goalDKP.toLocaleString()}</td><td>${m.currentDKP.toLocaleString()}</td>`;} html+=`<td>${m.totalKP.toLocaleString()}</td>`; if(key==='sheet3'){ html+=`<td>${m.casualties.toLocaleString()}</td>`;} html+='</tr>'; });
+      html+='</tbody></table>';
       sec.innerHTML = html;
-
       const pag = document.getElementById(`pages-${key}`);
-      pag.innerHTML = Array.from({length: totalPages},(_,i)=>
-        `<button class="page-btn${i+1===pg?' active':''}" data-key="${key}" data-page="${i+1}">${i+1}</button>`
-      ).join('');
-      pag.querySelectorAll('.page-btn').forEach(btn=>btn.onclick=()=>{ currentPage[key]=+btn.dataset.page; renderTable(key); });
+      pag.innerHTML = Array.from({length:tp},(_,i)=>`<button class="page-btn${i+1===pg?' active':''}" data-key="${key}" data-page="${i+1}">${i+1}</button>`).join('');
+      pag.querySelectorAll('.page-btn').forEach(btn=>btn.onclick=()=>{ currentPage[key]=+btn.dataset.page; renderTable(key);} );
     }
 
-    // 탭 전환 설정
     function setupTabs() {
-      document.querySelectorAll('.tab-btn').forEach(btn=>{
-        btn.onclick = ()=>{
-          document.querySelectorAll('.tab-btn').forEach(x=>x.classList.remove('active'));
-          document.querySelectorAll('.member-section, .pagination').forEach(x=>x.classList.remove('active'));
-          btn.classList.add('active');
-          const key = btn.dataset.key;
-          document.getElementById(`section-${key}`).classList.add('active');
-          document.getElementById(`pages-${key}`).classList.add('active');
-        };
-      });
+      document.querySelectorAll('.tab-btn').forEach(btn=>{ btn.onclick = ()=>{
+        document.querySelectorAll('.tab-btn').forEach(x=>x.classList.remove('active'));
+        document.querySelectorAll('.member-section, .pagination').forEach(x=>x.classList.remove('active'));
+        btn.classList.add('active'); const key = btn.dataset.key;
+        document.getElementById(`section-${key}`).classList.add('active');
+        document.getElementById(`pages-${key}`).classList.add('active');
+      }; });
     }
 
-        // 언어 적용
     function applyLang() {
       const t = texts[lang];
       document.getElementById('title').textContent = t.title;
       document.getElementById('totalKPLabel').textContent = t.totalKP;
       document.getElementById('discordBtn').textContent = t.discord;
-      document.getElementById('searchInput').placeholder =
-        lang === 'ko' ? '멤버 이름 또는 ID 검색…' : 'Search by name or ID…';
-      // 언어 토글 시 헤더도 재렌더링
+      document.getElementById('searchInput').placeholder = lang==='ko'?'멤버 이름 또는 ID 검색…':'Search by name or ID…';
       keys.forEach(renderTable);
     }
   </script>
 </body>
 </html>
-</body>
-</html>
-
