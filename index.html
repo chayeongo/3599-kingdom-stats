@@ -258,15 +258,19 @@
       });
     }
 
-    // 언어 적용
+        // 언어 적용
     function applyLang() {
       const t = texts[lang];
       document.getElementById('title').textContent = t.title;
       document.getElementById('totalKPLabel').textContent = t.totalKP;
       document.getElementById('discordBtn').textContent = t.discord;
       document.getElementById('searchInput').placeholder =
-        lang==='ko' ? '멤버 이름 또는 ID 검색…' : 'Search by name or ID…';
+        lang === 'ko' ? '멤버 이름 또는 ID 검색…' : 'Search by name or ID…';
+      // 언어 토글 시 헤더도 재렌더링
+      keys.forEach(renderTable);
     }
   </script>
+</body>
+</html>
 </body>
 </html>
