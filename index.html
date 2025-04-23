@@ -172,7 +172,10 @@
 
       const sec = document.getElementById(`section-${key}`);
       const hdrs = key==='sheet3' ? texts[lang].headers3 : texts[lang].headers12;
-      let html = `<h2>${sheetNames[key].replace('시트','KVK')}</h2><table><thead><tr>${hdrs.map(h=>`<th>${h}</th>`).join('')}</tr></thead><tbody>`;
+      let html = `<h2>${sheetNames[key].replace('시트','KVK')}</h2>` +
+                 `<table><thead><tr>` +
+                 hdrs.map(h => '<th>' + h + '</th>').join('') +
+                 `</tr></thead><tbody>`;
       pageData.forEach(m=>{
         if(key==='sheet3'){
           html += `<tr><td>${m.id}</td><td>${m.name}</td><td>${m.goalDKP.toLocaleString()}</td><td>${m.currentDKP.toLocaleString()}</td><td>${m.totalKP.toLocaleString()}</td><td>${m.casualties.toLocaleString()}</td></tr>`;
